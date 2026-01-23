@@ -1,6 +1,6 @@
 @font-face {
   font-family: 'GowunDodum';
-  src: url('./fonts/GowunDodum-Regular.ttf') format('truetype');
+  src: url('https://d2yzln6f92x3hm.cloudfront.net/public/media/GowunDodum-Regular.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -24,9 +24,9 @@ body {
 }
 
 :root {
-  --sidebar-width: 25vw;
-  --sidebar-min-width: 250px;
-  --sidebar-max-width: 350px;
+  --sidebar-width: 20vw;
+  --sidebar-min-width: 200px;
+  --sidebar-max-width: 300px;
 }
 
 /* Add this rule for form elements */
@@ -98,9 +98,14 @@ input, button, textarea {
   color: #ffffff;
 }
 
-h1, h2, h3, h4, h5 {
+h1 {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  color: #7b68ed; /* 제목 색상도 보라색 계열로 */
+  color: white;
+}
+
+h2, h3, h4, h5 {
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  color: #7b68ed;
 }
 
 p {
@@ -134,9 +139,9 @@ button:disabled {
 }
 
 textarea {
-  width: calc(100% - 20px);
+  width: 100%; /* Default width */
   padding: 10px;
-  margin: 10px 0;
+  margin: 5px 0 10px 0; /* Adjusted margin */
   box-sizing: border-box;
   border: 1px solid #7b68ed;
   border-radius: 5px;
@@ -171,4 +176,76 @@ pre {
   color: #ff6b6b;
   margin-top: 1rem;
   font-weight: bold;
+}
+
+/* Credit Modal Styles */
+.credit-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.credit-modal-content {
+  background-color: #2d2d2d;
+  padding: 30px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  color: #fff;
+  max-width: 400px;
+  width: 90%;
+}
+
+.credit-modal-content h2 {
+  color: #ff6b6b; /* Warning color */
+  margin-bottom: 20px;
+}
+
+.credit-modal-content p {
+  font-size: 1.1em;
+  margin-bottom: 30px;
+}
+
+.credit-modal-content button {
+  background-color: #7B68EE;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1em;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.credit-modal-content button:hover {
+  background-color: #6a5acd;
+}
+
+/* Concern Input Wrapper for Char Counter */
+.concern-input-wrapper {
+  position: relative; /* Make it a positioning context for absolute children */
+  width: 100%;
+}
+
+.char-counter {
+  position: absolute;
+  bottom: 20px; /* Adjust to be inside the textarea's padding */
+  right: 15px; /* Adjust to be inside the textarea's padding */
+  font-size: 0.8rem;
+  color: #a0a0a0;
+  z-index: 1; /* Ensure it's above the textarea content */
+}
+
+.concern-input-wrapper textarea {
+  padding-bottom: 30px; /* Make space for the counter at the bottom */
+  width: 100%; /* Use 100% width of the wrapper */
+  box-sizing: border-box; /* Include padding in width calculation */
 }

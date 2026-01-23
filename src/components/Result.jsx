@@ -1,8 +1,10 @@
 import React from 'react';
 import './Result.css';
 
-function Result({ result }) {
+function Result({ result, goToHome }) {
   if (!result) {
+    // 결과가 아직 로드되지 않았을 때 null 대신 로딩 표시나 간단한 메시지를 반환하는 것이 사용자 경험에 더 좋습니다.
+    // App.jsx에서 이미 'loading' 상태를 처리하므로, 여기서는 null을 반환해도 괜찮습니다.
     return null;
   }
 
@@ -37,6 +39,12 @@ function Result({ result }) {
       <div className="summary-section">
         <h3>총평</h3>
         <div className="summary-text">{reading.summary}</div>
+      </div>
+
+      <div className="home-button-container">
+        <button onClick={goToHome} className="home-button">
+          홈으로 돌아가기
+        </button>
       </div>
     </div>
   );

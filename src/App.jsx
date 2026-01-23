@@ -24,15 +24,41 @@ function App() {
   const [error, setError] = useState(null);
 
   // --- 타로 상담을 위한 State ---
-  const [concern, setConcern] = useState(''); // 사용자의 고민 내용
-  const [tarotReading, setTarotReading] = useState(null); // 타로 상담 결과
-  const [isReadingLoading, setIsReadingLoading] = useState(false); // 타로 상담 로딩 상태
-  const [readingError, setReadingError] = useState(null); // 타로 상담 오류
-  const [view, setView] = useState('form'); // 'form', 'selecting', 'loading', 'result'
+  const [concern, setConcern] = useState('');
+  const [tarotReading, setTarotReading] = useState(null);
+  const [isReadingLoading, setIsReadingLoading] = useState(false);
+  const [readingError, setReadingError] = useState(null);
+  const [showCreditModal, setShowCreditModal] = useState(false); // 크레딧 모달 상태
+  
+  // --- 뷰 상태 ---
+  // URL 해시에서 초기 뷰를 가져오거나 'form'으로 기본 설정
+  const [view, setView] = useState(window.location.hash.substring(1) || 'form');
 
-  // --- 사이드바 상태 추가 ---
+  // --- 사이드바 상태 ---
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
+  // --- 뷰 변경 및 히스토리 관리 ---
+  const changeView = (newView) => {
+    window.location.hash = newView;
+    setView(newView);
+  };
+
+  useEffect(() => {
+    const handleHashChange = () => {
+      setView(window.location.hash.substring(1) || 'form');
+    };
+
+    window.addEventListener('hashchange', handleHashChange);
+    
+    // 초기 뷰 설정
+    handleHashChange();
+
+    return () => {
+      window.removeEventListener('hashchange', handleHashChange);
+    };
+  }, []);
+
 
   useEffect(() => {
     const {
@@ -45,8 +71,8 @@ function App() {
         setConcern('');
         setTarotReading(null);
         setReadingError(null);
-        setIsSidebarOpen(false); // 로그아웃 시 사이드바 닫기
-        setView('form');
+        setIsSidebarOpen(false);
+        changeView('form');
       }
     });
 
@@ -98,12 +124,17 @@ function App() {
       setReadingError('고민 내용을 입력해주세요.');
       return;
     }
+    // 크레딧 부족 시 모달 표시
+    if (profile && profile.credit <= 0) {
+      setShowCreditModal(true);
+      return;
+    }
     setReadingError(null);
-    setView('selecting');
+    changeView('selecting');
   }
 
   async function handleCardSelection(selectedCards) {
-    setView('loading');
+    changeView('loading');
     setReadingError(null);
     setTarotReading(null);
 
@@ -124,15 +155,19 @@ function App() {
 
       const data = await response.json();
       setTarotReading(data);
-      setView('result');
+      changeView('result');
+      // 로컬에서 크레딧을 1 차감하여 UI를 즉시 업데이트합니다.
+      setProfile(prevProfile => ({
+        ...prevProfile,
+        credit: prevProfile.credit - 1
+      }));
 
     } catch (e) {
       console.error("Error fetching tarot reading:", e);
       setReadingError(e.message);
-      setView('form'); // 오류 발생 시 폼으로 돌아가기
+      changeView('form'); // 오류 발생 시 폼으로 돌아가기
     }
   }
-
 
   async function googleLogin() {
     const { error } = await supabase.auth.signInWithOAuth({
@@ -152,6 +187,13 @@ function App() {
       console.error('Error signing out:', error.message);
     }
   }
+
+  const goToHome = () => {
+    setTarotReading(null);
+    setConcern('');
+    setReadingError(null);
+    changeView('form');
+  };
   
   const renderMainContent = () => {
     switch (view) {
@@ -160,30 +202,31 @@ function App() {
       case 'loading':
         return <Loading />;
       case 'result':
-        return <Result result={tarotReading} />;
+        return <Result result={tarotReading} goToHome={goToHome} />;
       case 'form':
       default:
         return (
           <div className="auth-container">
-            <h1>타로점 보기</h1>
+            <h1>타로정</h1>
             <p>당신의 고민을 입력하고 타로점 해석을 받아보세요.</p>
-            <hr />
-            <div>
-              <h3>고민 입력</h3>
+            
+            <div className="concern-input-wrapper">
               <textarea
                 value={concern}
                 onChange={(e) => setConcern(e.target.value)}
                 placeholder="예: 현재 진행하고 있는 프로젝트가 잘 될 수 있을까요?"
                 rows="4"
+                maxLength="500"
                 disabled={isReadingLoading}
               />
-              <button 
-                onClick={startTarotReading} 
-                disabled={isReadingLoading}
-              >
-                타로 카드 선택하기
-              </button>
+              <div className="char-counter">{concern.length}/500</div>
             </div>
+            <button 
+              onClick={startTarotReading} 
+              disabled={isReadingLoading}
+            >
+              타로 카드 선택하기
+            </button>
             {readingError && <p className="error-message">오류: {readingError}</p>}
           </div>
         );
@@ -195,8 +238,8 @@ function App() {
     <div className="App">
       {!session ? (
         <div className="auth-container">
-          <h1>타로점 보기</h1>
-          <p>Google 계정으로 로그인하고, 고민을 입력하여 Gemini가 해석해주는 타로점을 보세요.</p>
+          <h1>타로정</h1>
+          <p>고민을 입력하여 Gemini가 해석해주는 타로점을 보세요.</p>
           <button onClick={googleLogin}>
             Google 계정으로 로그인
           </button>
@@ -212,6 +255,17 @@ function App() {
           </div>
 
           <Sidebar profile={profile} session={session} signOut={signOut} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+
+          {/* 크레딧 부족 모달 */}
+          {showCreditModal && (
+            <div className="credit-modal-overlay">
+              <div className="credit-modal-content">
+                <h2>크레딧 부족</h2>
+                <p>타로점을 볼 크레딧이 부족합니다.</p>
+                <button onClick={() => setShowCreditModal(false)}>확인</button>
+              </div>
+            </div>
+          )}
         </>
       )}
     </div>

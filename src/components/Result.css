@@ -1,8 +1,7 @@
-
 .result-container {
   color: white;
   padding: 20px;
-  max-width: 900px; /* 최대 너비 확장 */
+  max-width: 900px;
   margin: 0 auto;
   animation: fadeInResult 1s ease-in-out;
 }
@@ -22,18 +21,17 @@
   border-radius: 15px;
 }
 
-/* 홀수번째 블록은 이미지 순서 반대로 */
 .reading-block:nth-child(odd) {
   flex-direction: row-reverse;
 }
 
 .card-display {
-  flex-shrink: 0; /* 카드가 찌그러지지 않도록 */
+  flex-shrink: 0;
   text-align: center;
 }
 
 .card-display img {
-  width: 150px; /* 카드 이미지 크기 살짝 키움 */
+  width: 150px;
   border-radius: 10px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   transition: transform 0.5s;
@@ -88,14 +86,14 @@
   text-align: left;
 }
 
-.share-section {
+.home-button-container {
   margin-top: 40px;
   text-align: center;
 }
 
-.share-button {
-  background-color: #c5aeff;
-  color: #121212;
+.home-button {
+  background-color: #7B68EE;
+  color: white;
   font-weight: bold;
   padding: 12px 25px;
   border: none;
@@ -105,36 +103,7 @@
   transition: all 0.3s;
 }
 
-.share-button:hover {
+.home-button:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 15px rgba(197, 174, 255, 0.5);
-}
-
-.share-button:disabled {
-  background-color: #555;
-  cursor: not-allowed;
-}
-
-.share-link-container {
-  margin-top: 20px;
-  display: flex;
-  gap: 10px;
-}
-
-.share-link-container input {
-  flex-grow: 1;
-  background-color: rgba(255,255,255,0.1);
-  border: 1px solid #c5aeff;
-  color: white;
-  padding: 10px;
-  border-radius: 8px;
-}
-
-.share-link-container button {
-  background-color: #9370DB;
-  border: none;
-  color: white;
-  padding: 0 20px;
-  border-radius: 8px;
-  cursor: pointer;
+  box-shadow: 0 0 15px rgba(123, 104, 238, 0.5);
 }
