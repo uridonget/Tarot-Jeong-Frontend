@@ -25,7 +25,10 @@ function App() {
 
   // --- 타로 상담을 위한 State ---
   const [concern, setConcern] = useState('');
-  const [tarotReading, setTarotReading] = useState(null);
+  const [tarotReading, setTarotReading] = useState(() => {
+    const saved = sessionStorage.getItem('tarotReading');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [isReadingLoading, setIsReadingLoading] = useState(false);
   const [readingError, setReadingError] = useState(null);
   const [showCreditModal, setShowCreditModal] = useState(false); // 크레딧 모달 상태
@@ -70,6 +73,7 @@ function App() {
         setError(null);
         setConcern('');
         setTarotReading(null);
+        sessionStorage.removeItem('tarotReading');
         setReadingError(null);
         setIsSidebarOpen(false);
         changeView('form');
@@ -155,6 +159,7 @@ function App() {
 
       const data = await response.json();
       setTarotReading(data);
+      sessionStorage.setItem('tarotReading', JSON.stringify(data)); // Save to session storage
       changeView('result');
       // 로컬에서 크레딧을 1 차감하여 UI를 즉시 업데이트합니다.
       setProfile(prevProfile => ({
@@ -182,6 +187,7 @@ function App() {
   async function signOut() {
     setProfile(null);
     setError(null);
+    sessionStorage.removeItem('tarotReading');
     const { error } = await supabase.auth.signOut();
     if (error) {
       console.error('Error signing out:', error.message);
@@ -192,6 +198,7 @@ function App() {
     setTarotReading(null);
     setConcern('');
     setReadingError(null);
+    sessionStorage.removeItem('tarotReading');
     changeView('form');
   };
   
