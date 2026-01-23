@@ -244,12 +244,14 @@ function App() {
   return (
     <div className="App">
       {!session ? (
-        <div className="auth-container">
-          <h1>타로정</h1>
-          <p>고민을 입력하여 Gemini가 해석해주는 타로점을 보세요.</p>
-          <button onClick={googleLogin}>
-            Google 계정으로 로그인
-          </button>
+        <div className="login-wrapper">
+          <div className="auth-container">
+            <h1>타로정</h1>
+            <p>고민을 입력하여 Gemini가 해석해주는 타로점을 보세요.</p>
+            <button onClick={googleLogin}>
+              Google 계정으로 로그인
+            </button>
+          </div>
         </div>
       ) : (
         <>
