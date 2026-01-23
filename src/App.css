@@ -23,6 +23,12 @@ body {
   align-items: center; /* App 컴포넌트가 중앙 정렬되도록 */
 }
 
+:root {
+  --sidebar-width: 25vw;
+  --sidebar-min-width: 250px;
+  --sidebar-max-width: 350px;
+}
+
 /* Add this rule for form elements */
 input, button, textarea {
   font-family: inherit;
@@ -30,26 +36,54 @@ input, button, textarea {
 }
 
 .App {
+  min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.auth-container {
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 40px;
+  border-radius: 15px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+  width: 100%;
+  max-width: 600px;
+  margin: 1rem auto;
+  box-sizing: border-box;
+  text-align: center; /* 중앙 정렬 유지 */
+}
+
+/* New and Updated styles for layout */
+.main-content-area {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  text-align: center;
-  width: 100%; /* 너비를 100%로 설정하여 내부 maxWidth와 조화 */
-  padding: 1rem; /* 전체적인 패딩 추가 */
-  box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+  box-sizing: border-box;
+  transition: margin-left 0.3s ease-in-out;
+  margin-left: 0; /* 기본 마진 */
 }
 
-.auth-container {
-  background-color: rgba(0, 0, 0, 0.6); /* 샘플보다 약간 더 투명하게 */
-  padding: 40px;
-  border-radius: 15px;
-  box-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
-  width: 100%;
-  max-width: 600px; /* 최대 너비 설정 */
-  margin: 1rem auto; /* 상하 여백 및 중앙 정렬 */
-  box-sizing: border-box; /* 패딩이 너비에 포함되도록 */
+.main-content-area.shifted {
+  margin-left: calc(max(var(--sidebar-min-width), min(var(--sidebar-max-width), var(--sidebar-width))));
+}
+
+.sidebar-toggle-button {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1100; /* 사이드바보다 위에 위치 */
+  background: rgba(0,0,0,0.5);
+  color: white;
+  border: 1px solid #7b68ed;
+  width: 40px; /* 크기 줄임 */
+  height: 40px; /* 크기 줄임 */
+  font-size: 20px; /* 글자 크기 줄임 */
+  display: flex; /* 내부 요소 중앙 정렬 */
+  align-items: center; /* 내부 요소 수직 중앙 정렬 */
+  justify-content: center; /* 내부 요소 수평 중앙 정렬 */
+  line-height: 1; /* 글자 위아래 정렬 보정 */
 }
 
 .toggle-link {
@@ -66,7 +100,7 @@ input, button, textarea {
 
 h1, h2, h3, h4, h5 {
   text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-  color: #e0e0e0; /* 제목 색상도 보라색 계열로 */
+  color: #7b68ed; /* 제목 색상도 보라색 계열로 */
 }
 
 p {
@@ -76,13 +110,13 @@ p {
 button {
   background-color: #7b68ed;
   border: none;
-  color: white;
+  color: white; /* 버튼 텍스트는 흰색으로 */
   padding: 10px 20px;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 1rem;
-  margin: 8px 0; /* 상하 여백 조정 */
+  margin: 8px 0;
   cursor: pointer;
   border-radius: 8px;
   font-weight: bold;
@@ -100,15 +134,15 @@ button:disabled {
 }
 
 textarea {
-  width: calc(100% - 20px); /* 패딩 고려 */
+  width: calc(100% - 20px);
   padding: 10px;
   margin: 10px 0;
   box-sizing: border-box;
-  border: 1px solid #7b68ed; /* 보라색 테두리 */
+  border: 1px solid #7b68ed;
   border-radius: 5px;
   background-color: rgba(255, 255, 255, 0.1);
   color: white;
-  resize: vertical; /* 수직 크기 조절 허용 */
+  resize: vertical;
 }
 
 textarea::placeholder {

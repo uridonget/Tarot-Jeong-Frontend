@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { createClient } from '@supabase/supabase-js';
 import './App.css'; // 새로 업데이트된 App.css 임포트
 import './index.css'; // index.css도 임포트 (기존에 있었을 경우)
+import Sidebar from './components/Sidebar'; // Sidebar 컴포넌트 임포트
 
 // --- Supabase 설정 ---
 const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
@@ -26,6 +27,10 @@ function App() {
   const [isReadingLoading, setIsReadingLoading] = useState(false); // 타로 상담 로딩 상태
   const [readingError, setReadingError] = useState(null); // 타로 상담 오류
 
+  // --- 사이드바 상태 추가 ---
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
+
   useEffect(() => {
     const {
       data: { subscription },
@@ -37,6 +42,7 @@ function App() {
         setConcern('');
         setTarotReading(null);
         setReadingError(null);
+        setIsSidebarOpen(false); // 로그아웃 시 사이드바 닫기
       }
     });
 
@@ -140,71 +146,82 @@ function App() {
 
   return (
     <div className="App">
-      <div className="auth-container"> {/* auth-container 클래스 적용 */}
-        <h1>타로정</h1>
-        {!session ? (
+      {/* 로그인 전 화면 */}
+      {!session ? (
+        <div className="auth-container">
+          <h1>타로점 보기</h1>
+          <p>Google 계정으로 로그인하고, 고민을 입력하여 Gemini가 해석해주는 타로점을 보세요.</p>
           <button onClick={googleLogin}>
             Google 계정으로 로그인
           </button>
-        ) : (
-          <> {/* Fragment를 사용하여 여러 요소를 묶음 */}
-            <h2>환영합니다, {profile?.nickname || session.user.email}님</h2>
-            <button onClick={signOut}>로그아웃</button>
+        </div>
+      ) : (
+        <> {/* 로그인 후 레이아웃 */}
+          {/* 사이드바 토글 버튼 */}
+          <button onClick={toggleSidebar} className="sidebar-toggle-button">
+            ☰
+          </button>
 
-            <hr /> {/* HR은 이미 App.css에서 스타일링됨 */}
+          <div className={`main-content-area ${isSidebarOpen ? 'shifted' : ''}`}> {/* 메인 콘텐츠 영역 */}
+            <div className="auth-container"> {/* 메인 콘텐츠도 auth-container로 감싸서 스타일 유지 */}
+              <h1>타로점 보기</h1> {/* 타이틀은 메인 콘텐츠에 유지 */}
+              <p>당신의 고민을 입력하고 타로점 해석을 받아보세요.</p>
 
-            {/* --- 타로 상담 UI --- */}
-            <div>
-              <h3>타로점 보기</h3>
-              <p>당신의 고민을 자세히 적어주세요.</p>
-              <textarea
-                value={concern}
-                onChange={(e) => setConcern(e.target.value)}
-                placeholder="예: 현재 진행하고 있는 프로젝트가 잘 될 수 있을까요?"
-                rows="4"
-                disabled={isReadingLoading}
-              />
-              <button 
-                onClick={getTarotReading} 
-                disabled={isReadingLoading}
-              >
-                {isReadingLoading ? '해석 중...' : '타로점 보기'}
-              </button>
-            </div>
+              <hr />
 
-            {/* --- 타로 상담 결과 표시 --- */}
-            {readingError && <p className="error-message">오류: {readingError}</p>} {/* 클래스 적용 */}
-            
-            {tarotReading && (
-              <div style={{ marginTop: '2rem', textAlign: 'left' }}> {/* inline style 유지 또는 class 추가 */}
-                <h4>상담 결과</h4>
-                
-                <h5>뽑힌 카드</h5>
-                <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-                  {tarotReading.cards.map(card => (
-                    <div key={card.name} style={{ border: '1px solid #61dafb', padding: '0.5rem', borderRadius: '4px', backgroundColor: 'rgba(40, 44, 52, 0.8)' }}>
-                      <strong>{card.name}</strong> ({card.orientation})
-                    </div>
-                  ))}
-                </div>
-
-                <h5>과거</h5>
-                <p>{tarotReading.reading.past}</p>
-                
-                <h5>현재</h5>
-                <p>{tarotReading.reading.present}</p>
-                
-                <h5>미래</h5>
-                <p>{tarotReading.reading.future}</p>
-
-                <h5>총평 및 조언</h5>
-                <p>{tarotReading.reading.summary}</p>
+              {/* --- 타로 상담 UI --- */}
+              <div>
+                <h3>고민 입력</h3>
+                <textarea
+                  value={concern}
+                  onChange={(e) => setConcern(e.target.value)}
+                  placeholder="예: 현재 진행하고 있는 프로젝트가 잘 될 수 있을까요?"
+                  rows="4"
+                  disabled={isReadingLoading}
+                />
+                <button 
+                  onClick={getTarotReading} 
+                  disabled={isReadingLoading}
+                >
+                  {isReadingLoading ? '해석 중...' : '타로점 보기'}
+                </button>
               </div>
-            )}
 
-          </>
-        )}
-      </div>
+              {/* --- 타로 상담 결과 표시 --- */}
+              {readingError && <p className="error-message">오류: {readingError}</p>}
+              
+              {tarotReading && (
+                <div style={{ marginTop: '2rem', textAlign: 'left' }}>
+                  <h4>상담 결과</h4>
+                  
+                  <h5>뽑힌 카드</h5>
+                  <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
+                    {tarotReading.cards.map(card => (
+                      <div key={card.name} style={{ border: '1px solid #7b68ed', padding: '0.5rem', borderRadius: '4px', backgroundColor: 'rgba(40, 44, 52, 0.8)' }}>
+                        <strong>{card.name}</strong> ({card.orientation})
+                      </div>
+                    ))}
+                  </div>
+
+                  <h5>과거</h5>
+                  <p>{tarotReading.reading.past}</p>
+                  
+                  <h5>현재</h5>
+                  <p>{tarotReading.reading.present}</p>
+                  
+                  <h5>미래</h5>
+                  <p>{tarotReading.reading.future}</p>
+
+                  <h5>총평 및 조언</h5>
+                  <p>{tarotReading.reading.summary}</p>
+                </div>
+              )}
+            </div> {/* 메인 콘텐츠 auth-container 끝 */}
+          </div> {/* 메인 콘텐츠 영역 끝 */}
+
+          <Sidebar profile={profile} session={session} signOut={signOut} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+        </>
+      )}
     </div>
   );
 }
