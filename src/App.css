@@ -83,7 +83,7 @@ input, button, textarea {
   display: flex; /* 내부 요소 중앙 정렬 */
   align-items: center; /* 내부 요소 수직 중앙 정렬 */
   justify-content: center; /* 내부 요소 수평 중앙 정렬 */
-  line-height: 1; /* 글자 위아래 정렬 보정 */
+  line-height: 0.9; /* 아이콘을 살짝 위로 올리기 위한 조정 */
 }
 
 .toggle-link {

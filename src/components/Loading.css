@@ -1,4 +1,3 @@
-
 .loading-container {
   display: flex;
   flex-direction: column;
@@ -12,10 +11,11 @@
 .loading-text {
   font-size: 1.5em;
   margin-top: 20px;
+  font-weight: bold; /* Make the text bolder */
 }
 
 .loading-text span {
-  display: inline-block; /* transform을 적용하기 위해 필요 */
+  display: inline-block; /* Needed for transform to apply */
   animation: bounce 1.6s infinite ease-in-out;
 }
 
@@ -28,7 +28,7 @@
   }
 }
 
-/* 간단한 별 애니메이션 */
+/* Simple star animation */
 .stars {
   position: relative;
   width: 100px;

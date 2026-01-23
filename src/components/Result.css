@@ -53,9 +53,13 @@
   margin-top: 5px;
 }
 
+.interpretation-text h4, .summary-section h3 {
+  color: white;
+}
+
 .interpretation-text h4 {
   font-size: 1.5em;
-  color: #c5aeff;
+  /* color is now white */
   margin-top: 0;
   margin-bottom: 15px;
 }

@@ -2,10 +2,26 @@ import React from 'react';
 import './Loading.css';
 
 function Loading() {
+  const text = "카드를 해석하고 있습니다...";
+
   return (
     <div className="loading-container">
-      <div className="spinner"></div>
-      <p>카드를 해석하고 있습니다...</p>
+      <div className="stars">
+        <div className="star"></div>
+        <div className="star"></div>
+        <div className="star"></div>
+        <div className="star"></div>
+      </div>
+      <div className="loading-text">
+        {text.split('').map((char, index) => (
+          <span 
+            key={index} 
+            style={{ animationDelay: `${index * 0.1}s` }}
+          >
+            {char === ' ' ? '\u00A0' : char} 
+          </span>
+        ))}
+      </div>
     </div>
   );
 }
