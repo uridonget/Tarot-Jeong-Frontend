@@ -1,0 +1,53 @@
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  color: white;
+  padding-bottom: 15vh;
+}
+
+.loading-text {
+  font-size: 1.5em;
+  margin-top: 20px;
+}
+
+.loading-text span {
+  display: inline-block; /* transform을 적용하기 위해 필요 */
+  animation: bounce 1.6s infinite ease-in-out;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+/* 간단한 별 애니메이션 */
+.stars {
+  position: relative;
+  width: 100px;
+  height: 100px;
+}
+
+.star {
+  position: absolute;
+  background-color: white;
+  border-radius: 50%;
+  animation: twinkle 1.5s infinite;
+}
+
+.star:nth-child(1) { top: 10%; left: 20%; width: 2px; height: 2px; animation-delay: 0s; }
+.star:nth-child(2) { top: 80%; left: 30%; width: 3px; height: 3px; animation-delay: 0.3s; }
+.star:nth-child(3) { top: 40%; left: 80%; width: 2px; height: 2px; animation-delay: 0.6s; }
+.star:nth-child(4) { top: 60%; left: 10%; width: 1px; height: 1px; animation-delay: 0.9s; }
+
+@keyframes twinkle {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.5); opacity: 0.5; }
+}

@@ -1,0 +1,148 @@
+/* 전체 레이아웃 컨테이너 */
+.card-selector-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 상단 안내 문구 */
+.selection-prompt {
+  min-height: 80px; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 25px;
+  font-size: 1.4em;
+  color: #f0f0f0;
+  text-shadow: 0 0 10px rgba(0,0,0,0.8);
+  text-align: center;
+  font-weight: bold;
+  opacity: 1;
+  transition: opacity 0.4s ease-in-out;
+}
+
+.selection-prompt.fade-out {
+  opacity: 0;
+}
+
+/* CSS Grid를 사용한 카드 컨테이너 */
+.card-grid {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  justify-content: center;
+  grid-template-columns: repeat(2, auto);
+}
+
+@media (min-width: 340px) { .card-grid { grid-template-columns: repeat(3, auto); } }
+@media (min-width: 700px) { .card-grid { grid-template-columns: repeat(6, auto); } }
+@media (min-width: 1000px) { .card-grid { grid-template-columns: repeat(13, auto); } }
+
+/* 개별 타로 카드 */
+.tarot-card {
+  width: 40px;
+  height: 80px;
+  background-image: url('https://d2yzln6f92x3hm.cloudfront.net/public/media/card_back.png');
+  background-size: cover;
+  background-position: center;
+  border-radius: 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* 기본 그림자 */
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, filter 0.3s ease;
+  
+  opacity: 0;
+  animation: fadeInCard 0.6s ease-out forwards;
+}
+
+/* ✅ 최종 수정: hover 시에도 그림자 '크기'는 동일하게, 색상/농도만 변경 */
+.tarot-card:not(.picked):hover {
+  filter: brightness(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5); /* 크기는 동일, 농도만 진하게 */
+  z-index: 10;
+}
+
+/* ✅ 최종 수정: picked 상태의 그림자 크기도 동일하게 맞춤 */
+.tarot-card.picked {
+  filter: brightness(1.2);
+  box-shadow: 0 4px 12px rgba(255, 220, 100, 0.6); /* 크기는 동일, 색상만 변경 */
+  z-index: 10;
+}
+
+/* 모달 뒷배경 */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  opacity: 0;
+  animation: fadeInModal 0.4s ease forwards;
+}
+
+/* 모달 창 */
+.modal-content {
+  background-color: #2d2d2d;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  color: #fff;
+  transform: scale(0.9);
+  animation: zoomInModal 0.4s ease forwards;
+}
+
+.modal-content p {
+  margin: 0 0 25px 0;
+  font-size: 1.2em;
+}
+
+/* 모달 버튼 컨테이너 */
+.modal-actions {
+  display: flex;
+  gap: 15px;
+}
+
+/* 모달 버튼 공통 스타일 */
+.modal-button {
+  padding: 10px 20px;
+  font-size: 1em;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.modal-button:hover {
+  transform: scale(1.05);
+}
+
+.modal-button.confirm {
+  background-color: #7B68EE;
+  color: white;
+}
+.modal-button.confirm:hover {
+  background-color: #6a5acd;
+}
+
+.modal-button.cancel {
+  background-color: #555;
+  color: white;
+}
+.modal-button.cancel:hover {
+  background-color: #666;
+}
+
+/* 애니메이션 키프레임 */
+@keyframes fadeInCard { to { opacity: 1; transform: translateY(0); } }
+@keyframes fadeInText { to { opacity: 1; } }
+@keyframes fadeInModal { to { opacity: 1; } }
+@keyframes zoomInModal { to { transform: scale(1); } }

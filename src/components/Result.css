@@ -1,0 +1,140 @@
+
+.result-container {
+  color: white;
+  padding: 20px;
+  max-width: 900px; /* 최대 너비 확장 */
+  margin: 0 auto;
+  animation: fadeInResult 1s ease-in-out;
+}
+
+@keyframes fadeInResult {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reading-block {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  margin-bottom: 50px;
+  background-color: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 15px;
+}
+
+/* 홀수번째 블록은 이미지 순서 반대로 */
+.reading-block:nth-child(odd) {
+  flex-direction: row-reverse;
+}
+
+.card-display {
+  flex-shrink: 0; /* 카드가 찌그러지지 않도록 */
+  text-align: center;
+}
+
+.card-display img {
+  width: 150px; /* 카드 이미지 크기 살짝 키움 */
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: transform 0.5s;
+}
+
+.card-display img.reversed-card {
+  transform: rotate(180deg);
+}
+
+.card-name {
+  margin-top: 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+.card-meaning {
+  font-size: 0.9em;
+  color: #ddd;
+  margin-top: 5px;
+}
+
+.interpretation-text h4 {
+  font-size: 1.5em;
+  color: #c5aeff;
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.interpretation-text p {
+  white-space: pre-wrap; 
+  line-height: 1.8;
+  margin: 0;
+  text-align: left;
+}
+
+.summary-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.summary-section h3 {
+  font-size: 1.8em;
+  margin-bottom: 20px;
+}
+
+.summary-text {
+  white-space: pre-wrap;
+  background-color: rgba(0, 0, 0, 0.3);
+  padding: 30px;
+  border-radius: 15px;
+  line-height: 1.8;
+  text-align: left;
+}
+
+.share-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.share-button {
+  background-color: #c5aeff;
+  color: #121212;
+  font-weight: bold;
+  padding: 12px 25px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1.1em;
+  transition: all 0.3s;
+}
+
+.share-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(197, 174, 255, 0.5);
+}
+
+.share-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.share-link-container {
+  margin-top: 20px;
+  display: flex;
+  gap: 10px;
+}
+
+.share-link-container input {
+  flex-grow: 1;
+  background-color: rgba(255,255,255,0.1);
+  border: 1px solid #c5aeff;
+  color: white;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.share-link-container button {
+  background-color: #9370DB;
+  border: none;
+  color: white;
+  padding: 0 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
