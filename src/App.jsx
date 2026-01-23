@@ -14,7 +14,7 @@ const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // ---------------------------------
 // TODO: 'sam deploy' 후 출력되는 API Gateway URL로 이 값을 변경해주세요.
-const API_URL = 'https://zobi3rp9hh.execute-api.ap-northeast-2.amazonaws.com/v1';
+const API_URL = 'https://api.haechan.net';
 // ---------------------------------
 
 function App() {

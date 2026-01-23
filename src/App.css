@@ -25,7 +25,7 @@ body {
 
 :root {
   --sidebar-width: 20vw;
-  --sidebar-min-width: 200px;
+  --sidebar-min-width: 220px;
   --sidebar-max-width: 300px;
 }
 

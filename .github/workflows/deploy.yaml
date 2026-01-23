@@ -17,7 +17,6 @@ jobs:
         run: |
           npm install
           npm run build
-        working-directory: frontend
 
       - name: AWS IAM user define
         uses: aws-actions/configure-aws-credentials@v4
@@ -28,7 +27,6 @@ jobs:
       
       - name: S3 upload
         run: aws s3 sync build/ s3://${{ secrets.AWS_S3_FRONTEND_BUCKET }}
-        working-directory: frontend
       
       - name: Invalidate CloudFront
         uses: chetan/invalidate-cloudfront-action@v2
