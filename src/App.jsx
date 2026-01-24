@@ -7,6 +7,7 @@ import CardSelector from './components/CardSelector';
 import Loading from './components/Loading';
 import Result from './components/Result';
 import NotFound from './components/NotFound';
+import Forbidden from './components/Forbidden';
 
 // --- Supabase 설정 ---
 const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
@@ -50,7 +51,7 @@ function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      const validViews = ['form', 'selecting', 'loading', 'result'];
+      const validViews = ['form', 'selecting', 'loading', 'result', 'notfound', 'forbidden'];
       const hashView = window.location.hash.substring(1);
       if (hashView && !validViews.includes(hashView)) {
         setView('notfound');
@@ -115,6 +116,10 @@ function App() {
       });
 
       if (!response.ok) {
+        if (response.status === 403) {
+          changeView('forbidden');
+          return;
+        }
         const errorData = await response.json();
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
@@ -160,6 +165,10 @@ function App() {
       });
 
       if (!response.ok) {
+        if (response.status === 403) {
+          changeView('forbidden');
+          return;
+        }
         const errorData = await response.json();
         throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
       }
@@ -219,6 +228,8 @@ function App() {
         return <Result result={tarotReading} goToHome={goToHome} api_url={API_URL} session={session} />;
       case 'notfound':
         return <NotFound />;
+      case 'forbidden':
+        return <Forbidden />;
       case 'form':
       default:
         return (
