@@ -6,6 +6,7 @@ import Sidebar from './components/Sidebar';
 import CardSelector from './components/CardSelector';
 import Loading from './components/Loading';
 import Result from './components/Result';
+import NotFound from './components/NotFound';
 
 // --- Supabase 설정 ---
 const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
@@ -49,7 +50,13 @@ function App() {
 
   useEffect(() => {
     const handleHashChange = () => {
-      setView(window.location.hash.substring(1) || 'form');
+      const validViews = ['form', 'selecting', 'loading', 'result'];
+      const hashView = window.location.hash.substring(1);
+      if (hashView && !validViews.includes(hashView)) {
+        setView('notfound');
+      } else {
+        setView(hashView || 'form');
+      }
     };
 
     window.addEventListener('hashchange', handleHashChange);
@@ -210,6 +217,8 @@ function App() {
         return <Loading />;
       case 'result':
         return <Result result={tarotReading} goToHome={goToHome} api_url={API_URL} session={session} />;
+      case 'notfound':
+        return <NotFound />;
       case 'form':
       default:
         return (
