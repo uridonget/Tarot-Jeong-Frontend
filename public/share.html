@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>타로 리딩 결과</title>
+    <style>
+        /*
+         * 이 스타일은 App.css와 Result.css의 핵심 스타일을 가져와
+         * 이 독립된 페이지에서도 동일한 디자인을 유지하도록 합니다.
+         */
+        @import url('https://fonts.googleapis.com/css2?family=Gowun+Dodum&display=swap');
+
+        body {
+            font-family: 'Gowun Dodum', sans-serif;
+            background-image: url('https://d2yzln6f92x3hm.cloudfront.net/public/media/space-background.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: white;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        .main-container {
+            width: 100%;
+        }
+        /* Result.css 스타일 */
+        .result-container {
+            color: white;
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+            animation: fadeInResult 1s ease-in-out;
+        }
+
+        @keyframes fadeInResult {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .reading-block {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 50px;
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            border-radius: 15px;
+        }
+
+        .reading-block:nth-child(odd) {
+            flex-direction: row-reverse;
+        }
+
+        .card-display {
+            flex-shrink: 0;
+            text-align: center;
+        }
+
+        .card-display img {
+            width: 150px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            transition: transform 0.5s;
+        }
+
+        .card-display img.reversed-card {
+            transform: rotate(180deg);
+        }
+
+        .card-name {
+            margin-top: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+        }
+
+        .card-meaning {
+            font-size: 0.9em;
+            color: #ddd;
+            margin-top: 5px;
+        }
+
+        .interpretation-text h4, .summary-section h3 {
+            color: white;
+        }
+
+        .interpretation-text h4 {
+            font-size: 1.5em;
+            margin-top: 0;
+            margin-bottom: 15px;
+        }
+
+        .interpretation-text p {
+            white-space: pre-wrap;
+            line-height: 1.8;
+            margin: 0;
+            text-align: left;
+        }
+
+        .summary-section {
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .summary-section h3 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .summary-text {
+            white-space: pre-wrap;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border-radius: 15px;
+            line-height: 1.8;
+            text-align: left;
+        }
+
+        /* 메시지 스타일 */
+        .message {
+            text-align: center;
+            font-size: 1.5em;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-container" class="main-container">
+        <!-- 타로 결과가 여기에 동적으로 렌더링됩니다. -->
+        <h1 id="message-area" class="message">타로 리딩 결과를 불러오는 중...</h1>
+    </div>
+
+    <script>
+        // API Gateway URL. 실제 배포된 URL로 설정해야 합니다.
+        const API_URL = 'https://api.haechan.net';
+
+        // 페이지 로드 시 실행될 함수
+        document.addEventListener('DOMContentLoaded', async () => {
+            const messageArea = document.getElementById('message-area');
+            const mainContainer = document.getElementById('main-container');
+
+            try {
+                // 1. URL에서 공유 ID 가져오기
+                const params = new URLSearchParams(window.location.search);
+                const shareId = params.get('id');
+
+                if (!shareId) {
+                    throw new Error('공유 ID를 찾을 수 없습니다. URL을 확인해주세요.');
+                }
+
+                // 2. API를 통해 타로 리딩 데이터 가져오기
+                const response = await fetch(`${API_URL}/share/${shareId}`);
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || `결과를 불러오는데 실패했습니다 (HTTP ${response.status})`);
+                }
+                const result = await response.json();
+
+                // 3. 데이터를 HTML로 렌더링하기
+                renderResult(result, mainContainer);
+                messageArea.style.display = 'none'; // 로딩 메시지 숨기기
+
+            } catch (error) {
+                console.error('Error:', error);
+                messageArea.textContent = `오류: ${error.message}`;
+            }
+        });
+
+        function renderResult(result, container) {
+            const { cards, reading } = result;
+
+            const readingParts = [
+                { title: '과거', card: cards[0], text: reading.past },
+                { title: '현재', card: cards[1], text: reading.present },
+                { title: '미래', card: cards[2], text: reading.future },
+            ];
+
+            const resultHtml = `
+                <div class="result-container">
+                    ${readingParts.map((part, index) => `
+                        <div class="reading-block">
+                            <div class="card-display">
+                                <img
+                                    src="${part.card.image_url}"
+                                    alt="${part.card.name}"
+                                    class="${part.card.orientation === '역방향' ? 'reversed-card' : ''}"
+                                />
+                                <div class="card-name">${part.card.name} (${part.card.orientation})</div>
+                                <div class="card-meaning">${part.card.meaning}</div>
+                            </div>
+                            <div class="interpretation-text">
+                                <h4>${part.title}</h4>
+                                <p>${part.text.replace(/\n/g, '<br>')}</p>
+                            </div>
+                        </div>
+                    `).join('')}
+
+                    <div class="summary-section">
+                        <h3>총평</h3>
+                        <div class="summary-text">${reading.summary.replace(/\n/g, '<br>')}</div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = resultHtml;
+        }
+    </script>
+</body>
+</html>

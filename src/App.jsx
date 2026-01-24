@@ -209,7 +209,7 @@ function App() {
       case 'loading':
         return <Loading />;
       case 'result':
-        return <Result result={tarotReading} goToHome={goToHome} />;
+        return <Result result={tarotReading} goToHome={goToHome} api_url={API_URL} session={session} />;
       case 'form':
       default:
         return (

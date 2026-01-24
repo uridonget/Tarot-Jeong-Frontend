@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Result.css';
 
-function Result({ result, goToHome }) {
+function Result({ result, goToHome, api_url, session }) {
+  const [shareUrl, setShareUrl] = useState('');
+  const [isSharing, setIsSharing] = useState(false);
+  const [shareError, setShareError] = useState('');
+
   if (!result) {
-    // 결과가 아직 로드되지 않았을 때 null 대신 로딩 표시나 간단한 메시지를 반환하는 것이 사용자 경험에 더 좋습니다.
-    // App.jsx에서 이미 'loading' 상태를 처리하므로, 여기서는 null을 반환해도 괜찮습니다.
     return null;
   }
 
@@ -15,6 +17,56 @@ function Result({ result, goToHome }) {
     { title: '현재', card: cards[1], text: reading.present },
     { title: '미래', card: cards[2], text: reading.future },
   ];
+
+  const handleShare = async () => {
+    if (!api_url || !session) {
+      setShareError('공유 기능에 필요한 정보가 없습니다. 다시 로그인해주세요.');
+      return;
+    }
+    
+    setIsSharing(true);
+    setShareError('');
+    setShareUrl('');
+
+    try {
+      const response = await fetch(`${api_url}/share`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.access_token}`,
+        },
+        body: JSON.stringify(result),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || '공유 링크 생성에 실패했습니다.');
+      }
+
+      const data = await response.json();
+      // Use the domain from the current window location for the share URL
+      const shareBaseUrl = window.location.origin;
+      const newShareUrl = `${shareBaseUrl}/share.html?id=${data.share_id}`;
+      setShareUrl(newShareUrl);
+
+    } catch (e) {
+      console.error("Error creating share link:", e);
+      setShareError(e.message);
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(shareUrl)
+      .then(() => {
+        alert('공유 링크가 클립보드에 복사되었습니다!');
+      })
+      .catch(err => {
+        console.error('클립보드 복사 실패:', err);
+        alert('클립보드 복사에 실패했습니다.');
+      });
+  };
 
   return (
     <div className="result-container">
@@ -45,7 +97,22 @@ function Result({ result, goToHome }) {
         <button onClick={goToHome} className="home-button">
           홈으로 돌아가기
         </button>
+        <button onClick={handleShare} className="share-button" disabled={isSharing}>
+          {isSharing ? '링크 생성 중...' : '공유하기'}
+        </button>
       </div>
+
+      {shareError && <p className="error-message">{shareError}</p>}
+
+      {shareUrl && (
+        <div className="share-url-container">
+          <p>공유 링크가 생성되었습니다!</p>
+          <div className="share-input-wrapper">
+            <input type="text" value={shareUrl} readOnly />
+            <button onClick={copyToClipboard}>복사</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
