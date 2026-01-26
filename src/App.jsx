@@ -8,6 +8,9 @@ import Loading from './components/Loading';
 import Result from './components/Result';
 import NotFound from './components/NotFound';
 import Forbidden from './components/Forbidden';
+import Board from './components/Board';
+import PostEditor from './components/PostEditor';
+import PostView from './components/PostView';
 
 // --- Supabase 설정 ---
 const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
@@ -46,25 +49,19 @@ function App() {
   // --- 뷰 변경 및 히스토리 관리 ---
   const changeView = (newView) => {
     window.location.hash = newView;
-    setView(newView);
+    // setView(newView)는 handleHashChange에서 처리하므로 중복 호출 방지
   };
 
   useEffect(() => {
     const handleHashChange = () => {
-      const validViews = ['form', 'selecting', 'loading', 'result', 'notfound', 'forbidden'];
-      const hashView = window.location.hash.substring(1);
-      if (hashView && !validViews.includes(hashView)) {
-        setView('notfound');
-      } else {
-        setView(hashView || 'form');
-      }
+      setView(window.location.hash.substring(1) || 'form');
     };
-
+  
     window.addEventListener('hashchange', handleHashChange);
     
     // 초기 뷰 설정
     handleHashChange();
-
+  
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
@@ -130,7 +127,8 @@ function App() {
     } catch (e) {
       console.error("Error fetching profile:", e);
       setError(e.message);
-    } finally {
+    }
+    finally {
       setLoading(false);
     }
   }
@@ -219,7 +217,11 @@ function App() {
   };
   
   const renderMainContent = () => {
-    switch (view) {
+    const viewParts = view.split('/');
+    const baseView = viewParts[0];
+    const postId = viewParts.length > 1 ? viewParts[1] : null;
+
+    switch (baseView) {
       case 'selecting':
         return <CardSelector onCardSelect={handleCardSelection} />;
       case 'loading':
@@ -230,8 +232,19 @@ function App() {
         return <NotFound />;
       case 'forbidden':
         return <Forbidden />;
+      case 'board':
+        return <Board changeView={changeView} api_url={API_URL} />;
+      case 'post':
+        if (postId === 'new') {
+          return <PostEditor session={session} api_url={API_URL} changeView={changeView} />;
+        } else if (postId) {
+          return <PostView postId={postId} api_url={API_URL} changeView={changeView} />;
+        }
+        return <NotFound />;
       case 'form':
       default:
+        // 'form' 또는 정의되지 않은 모든 경로는 홈으로
+        if (baseView !== 'form' && view !== '') return <NotFound />;
         return (
           <div className="auth-container">
             <h1>타로정</h1>
@@ -280,10 +293,20 @@ function App() {
           </button>
 
           <div className={`main-content-area ${isSidebarOpen ? 'shifted' : ''}`}>
+            {/* 홈으로 이동 버튼 */}
+            <button onClick={() => changeView('form')} className="home-button">
+              🏠 홈으로
+            </button>
             {renderMainContent()}
           </div>
 
-          <Sidebar profile={profile} session={session} signOut={signOut} isSidebarOpen={isSidebarOpen} toggleSidebar={toggleSidebar} />
+          <Sidebar 
+            profile={profile} 
+            session={session} 
+            signOut={signOut} 
+            isSidebarOpen={isSidebarOpen} 
+            changeView={changeView} 
+          />
 
           {/* 크레딧 부족 모달 */}
           {showCreditModal && (

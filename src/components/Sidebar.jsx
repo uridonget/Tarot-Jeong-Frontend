@@ -1,7 +1,7 @@
 import React from 'react';
 import './Sidebar.css';
 
-function Sidebar({ profile, session, signOut, isSidebarOpen }) { // toggleSidebar prop 제거
+function Sidebar({ profile, session, signOut, isSidebarOpen, changeView }) { 
   // Show a loading/placeholder state if profile data isn't available yet
   if (!profile || !session) {
     return (
@@ -35,6 +35,10 @@ function Sidebar({ profile, session, signOut, isSidebarOpen }) { // toggleSideba
         <p className="credits-label">남은 크레딧</p>
         <p className="credits-value">{profile.credit ?? 'N/A'}</p>
       </div>
+
+      <button onClick={() => changeView('board')} className="sidebar-button">
+        게시판
+      </button>
       
       <button onClick={signOut} className="sidebar-logout-button">
         로그아웃
