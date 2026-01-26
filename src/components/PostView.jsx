@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import './PostView.css';
 import Loading from './Loading';
+import Comments from './Comments'; // Comments 컴포넌트 import
 
-function PostView({ postId, api_url, changeView }) {
+function PostView({ postId, api_url, changeView, session }) { // session prop 추가
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -70,14 +71,15 @@ function PostView({ postId, api_url, changeView }) {
       </div>
 
       <div className="post-view-content">
-        {post.content.split('\n').map((line, index) => (
-          <p key={index}>{line}</p>
-        ))}
+        {post.content}
       </div>
 
       <div className="post-view-actions">
         <button onClick={() => changeView('board')}>목록으로</button>
       </div>
+
+      {/* 댓글 섹션 추가 */}
+      <Comments postId={postId} api_url={api_url} session={session} />
     </div>
   );
 }

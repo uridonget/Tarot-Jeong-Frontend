@@ -238,7 +238,7 @@ function App() {
         if (postId === 'new') {
           return <PostEditor session={session} api_url={API_URL} changeView={changeView} />;
         } else if (postId) {
-          return <PostView postId={postId} api_url={API_URL} changeView={changeView} />;
+          return <PostView postId={postId} api_url={API_URL} changeView={changeView} session={session} />;
         }
         return <NotFound />;
       case 'form':

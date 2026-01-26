@@ -1,0 +1,106 @@
+.comments-section {
+  background-color: transparent; /* 요청대로 투명한 배경 */
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid #444;
+}
+
+.comments-title {
+  font-size: 1.5rem;
+  color: white;
+  margin-bottom: 1.5rem;
+}
+
+.comments-list {
+  margin-bottom: 2rem;
+}
+
+.comment-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #333;
+}
+
+.comment-item:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.comment-author-avatar {
+  width: 35px;
+  height: 35px;
+  border-radius: 50%;
+  margin-right: 1rem;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-author-name {
+  font-weight: bold;
+  color: #c0c0c0;
+  margin-bottom: 0.25rem;
+}
+
+.comment-text {
+  color: #f0f0f0;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+.comment-date {
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.comment-form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.comment-input {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid #555;
+  border-radius: 8px;
+  color: white;
+  padding: 0.8rem;
+  margin-bottom: 0.5rem;
+  resize: vertical;
+  min-height: 80px;
+}
+
+.comment-input:focus {
+  outline: none;
+  border-color: #7b68ed;
+}
+
+.comment-submit-button {
+  background-color: #7b68ed;
+  color: white;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.comment-submit-button:hover {
+  background-color: #5a48c1;
+}
+
+.comment-submit-button:disabled {
+  background-color: #555;
+  cursor: not-allowed;
+}
+
+.comment-login-prompt {
+    text-align: center;
+    color: #a0a0a0;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}

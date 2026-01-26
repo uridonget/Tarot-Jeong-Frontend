@@ -2,7 +2,7 @@ import React from 'react';
 import './Loading.css';
 
 function Loading() {
-  const text = "카드를 해석하고 있습니다...";
+  const text = "Loading...";
 
   return (
     <div className="loading-container">
