@@ -81,7 +81,7 @@ function Comments({ postId, api_url, session }) {
             <img src={comment.profile_image_url} alt={comment.nickname} className="comment-author-avatar" />
             <div className="comment-content">
               <div className="comment-author-name">{comment.nickname}</div>
-              <div className="comment-text">{comment.content}</div>
+              <div className="comment-text">{comment.is_deleted ? '(무적절한 표현으로 삭제된 댓글입니다.)' : comment.content}{comment.is_purified && ' (부적절한 표현으로 수정됨)'}</div>
               <div className="comment-date">{formatDate(comment.created_at)}</div>
             </div>
           </div>
