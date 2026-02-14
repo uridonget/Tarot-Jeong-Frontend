@@ -51,7 +51,7 @@ function Comments({ postId, api_url, session }) {
         const errorData = await response.json();
         throw new Error(errorData.error || '댓글 작성에 실패했습니다.');
       }
-      
+
       setNewComment('');
       // 댓글 작성 성공 후 댓글 목록 다시 불러오기
       fetchComments();
@@ -67,11 +67,11 @@ function Comments({ postId, api_url, session }) {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
     return new Date(dateString).toLocaleDateString('ko-KR', options);
   };
-  
+
   return (
     <div className="comments-section">
       <h3 className="comments-title">댓글</h3>
-      
+
       <div className="comments-list">
         {loading && <p>댓글을 불러오는 중...</p>}
         {error && <p className="error-message">{error}</p>}
@@ -81,7 +81,7 @@ function Comments({ postId, api_url, session }) {
             <img src={comment.profile_image_url} alt={comment.nickname} className="comment-author-avatar" />
             <div className="comment-content">
               <div className="comment-author-name">{comment.nickname}</div>
-              <div className="comment-text">{comment.is_deleted ? '(무적절한 표현으로 삭제된 댓글입니다.)' : comment.content}{comment.is_purified && ' (부적절한 표현으로 수정됨)'}</div>
+              <div className="comment-text">{comment.is_deleted ? '(부적절한 표현으로 삭제된 댓글입니다.)' : comment.content}{comment.is_purified && ' (부적절한 표현으로 수정됨)'}</div>
               <div className="comment-date">{formatDate(comment.created_at)}</div>
             </div>
           </div>
