@@ -37,7 +37,7 @@ function App() {
   const [isReadingLoading, setIsReadingLoading] = useState(false);
   const [readingError, setReadingError] = useState(null);
   const [showCreditModal, setShowCreditModal] = useState(false); // 크레딧 모달 상태
-  
+
   // --- 뷰 상태 ---
   // URL 해시에서 초기 뷰를 가져오거나 'form'으로 기본 설정
   const [view, setView] = useState(window.location.hash.substring(1) || 'form');
@@ -56,12 +56,12 @@ function App() {
     const handleHashChange = () => {
       setView(window.location.hash.substring(1) || 'form');
     };
-  
+
     window.addEventListener('hashchange', handleHashChange);
-    
+
     // 초기 뷰 설정
     handleHashChange();
-  
+
     return () => {
       window.removeEventListener('hashchange', handleHashChange);
     };
@@ -99,7 +99,7 @@ function App() {
       setError("API_URL을 설정해주세요. 'sam deploy' 후 출력된 URL로 교체해야 합니다.");
       return;
     }
-    
+
     setLoading(true);
     setError(null);
 
@@ -215,7 +215,7 @@ function App() {
     sessionStorage.removeItem('tarotReading');
     changeView('form');
   };
-  
+
   const renderMainContent = () => {
     const viewParts = view.split('/');
     const baseView = viewParts[0];
@@ -249,7 +249,7 @@ function App() {
           <div className="auth-container">
             <h1>타로정</h1>
             <p>당신의 고민을 입력하고 타로점 해석을 받아보세요.</p>
-            
+
             <div className="concern-input-wrapper">
               <textarea
                 value={concern}
@@ -261,8 +261,8 @@ function App() {
               />
               <div className="char-counter">{concern.length}/500</div>
             </div>
-            <button 
-              onClick={startTarotReading} 
+            <button
+              onClick={startTarotReading}
               disabled={isReadingLoading}
             >
               타로 카드 선택하기
@@ -293,19 +293,31 @@ function App() {
           </button>
 
           <div className={`main-content-area ${isSidebarOpen ? 'shifted' : ''}`}>
-            {/* 홈으로 이동 버튼 */}
-            <button onClick={() => changeView('form')} className="home-button">
-              🏠 홈으로
-            </button>
+            {/* 홈/목록 이동 버튼 */}
+            {view.startsWith('post') ? (
+              <button
+                onClick={() => changeView('board')}
+                className="home-button"
+              >
+                📋 목록으로
+              </button>
+            ) : (
+              <button
+                onClick={() => changeView('form')}
+                className="home-button"
+              >
+                🏠 홈으로
+              </button>
+            )}
             {renderMainContent()}
           </div>
 
-          <Sidebar 
-            profile={profile} 
-            session={session} 
-            signOut={signOut} 
-            isSidebarOpen={isSidebarOpen} 
-            changeView={changeView} 
+          <Sidebar
+            profile={profile}
+            session={session}
+            signOut={signOut}
+            isSidebarOpen={isSidebarOpen}
+            changeView={changeView}
           />
 
           {/* 크레딧 부족 모달 */}
