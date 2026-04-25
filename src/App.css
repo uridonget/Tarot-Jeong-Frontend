@@ -275,3 +275,19 @@ pre {
   width: 100%; /* Use 100% width of the wrapper */
   box-sizing: border-box; /* Include padding in width calculation */
 }
+
+.maintenance-container {
+  text-align: center;
+}
+
+.maintenance-message {
+  font-size: 1.2rem;
+  line-height: 1.8;
+  margin: 1rem 0 0.5rem;
+}
+
+.maintenance-sub {
+  font-size: 1rem;
+  opacity: 0.8;
+  margin-top: 0.5rem;
+}

@@ -12,6 +12,8 @@ import Board from './components/Board';
 import PostEditor from './components/PostEditor';
 import PostView from './components/PostView';
 
+const MAINTENANCE_MODE = true;
+
 // --- Supabase 설정 ---
 const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
 const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4Z2pnemdvYWt5a3pwZ3dzcXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTY0MTYsImV4cCI6MjA4NDQ3MjQxNn0.lt-QO3APUllRu5mry9huHa2SZQ2UqmujUcXvZA-qnBA';
@@ -273,6 +275,24 @@ function App() {
     }
   };
 
+
+  if (MAINTENANCE_MODE) {
+    return (
+      <div className="App">
+        <div className="login-wrapper">
+          <div className="auth-container maintenance-container">
+            <h1>타로정</h1>
+            <p className="maintenance-message">
+              더 좋은 서비스를 위해 잠시 중단하겠습니다.
+            </p>
+            <p className="maintenance-sub">
+              새로운 타로정으로 찾아오겠습니다. 🔮
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="App">
