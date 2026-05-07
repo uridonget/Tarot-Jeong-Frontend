@@ -12,7 +12,7 @@ import Board from './components/Board';
 import PostEditor from './components/PostEditor';
 import PostView from './components/PostView';
 
-const MAINTENANCE_MODE = true;
+const MAINTENANCE_MODE = false;
 
 // --- Supabase 설정 ---
 const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
