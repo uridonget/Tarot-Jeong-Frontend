@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabase';
 import './PostView.css';
 import Loading from './Loading';
-import Comments from './Comments'; // Comments 컴포넌트 import
+import Comments from './Comments';
 
-function PostView({ postId, api_url, changeView, session }) { // session prop 추가
+function PostView({ postId, api_url, changeView, session }) {
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,17 +14,19 @@ function PostView({ postId, api_url, changeView, session }) { // session prop �
       if (!postId) return;
       try {
         setLoading(true);
-        const response = await fetch(`${api_url}/posts/${postId}`);
-        if (!response.ok) {
-          if (response.status === 404) {
-            setError('게시글을 찾을 수 없습니다.');
-          } else {
-            throw new Error('게시글을 불러오는 데 실패했습니다.');
-          }
-        } else {
-          const data = await response.json();
-          setPost(data);
+        const { data, error } = await supabase
+          .from('posts')
+          .select('id, title, content, created_at, user_id, users(nickname, profile_image_url)')
+          .eq('id', postId)
+          .eq('is_deleted', false)
+          .single();
+
+        if (error) {
+          setError(error.code === 'PGRST116' ? '게시글을 찾을 수 없습니다.' : '게시글을 불러오는 데 실패했습니다.');
+          return;
         }
+
+        setPost({ ...data, nickname: data.users?.nickname, profile_image_url: data.users?.profile_image_url });
       } catch (err) {
         setError(err.message);
       } finally {
@@ -32,7 +35,7 @@ function PostView({ postId, api_url, changeView, session }) { // session prop �
     };
 
     fetchPost();
-  }, [api_url, postId]);
+  }, [postId]);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' };

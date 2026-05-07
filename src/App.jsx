@@ -101,31 +101,39 @@ function App() {
     setError(null);
 
     try {
-      const response = await fetch(`${API_URL}/profile`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-      });
+      const user = session.user;
 
-      if (!response.ok) {
-        if (response.status === 403) {
-          changeView('forbidden');
-          return;
-        }
-        const errorData = await response.json();
-        throw new Error(errorData.error || `HTTP error! status: ${response.status}`);
+      // 기존 유저 조회
+      const { data: existing } = await supabase
+        .from('users')
+        .select('*')
+        .eq('id', user.id)
+        .single();
+
+      if (existing) {
+        setProfile(existing);
+        return;
       }
 
-      const data = await response.json();
-      setProfile(data);
+      // 신규 유저 생성 (자동 회원가입)
+      const { data: newUser, error } = await supabase
+        .from('users')
+        .insert({
+          id: user.id,
+          email: user.email,
+          nickname: user.user_metadata?.full_name,
+          profile_image_url: user.user_metadata?.avatar_url,
+        })
+        .select()
+        .single();
+
+      if (error) throw new Error(error.message);
+      setProfile(newUser);
 
     } catch (e) {
       console.error("Error fetching profile:", e);
       setError(e.message);
-    }
-    finally {
+    } finally {
       setLoading(false);
     }
   }
