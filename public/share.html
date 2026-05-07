@@ -135,9 +135,11 @@
         <h1 id="message-area" class="message">타로 리딩 결과를 불러오는 중...</h1>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        // API Gateway URL. 실제 배포된 URL로 설정해야 합니다.
-        const API_URL = 'https://api.haechan.net';
+        const SUPABASE_URL = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4Z2pnemdvYWt5a3pwZ3dzcXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTY0MTYsImV4cCI6MjA4NDQ3MjQxNn0.lt-QO3APUllRu5mry9huHa2SZQ2UqmujUcXvZA-qnBA';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         // 페이지 로드 시 실행될 함수
         document.addEventListener('DOMContentLoaded', async () => {
@@ -153,13 +155,15 @@
                     throw new Error('공유 ID를 찾을 수 없습니다. URL을 확인해주세요.');
                 }
 
-                // 2. API를 통해 타로 리딩 데이터 가져오기
-                const response = await fetch(`${API_URL}/share/${shareId}`);
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `결과를 불러오는데 실패했습니다 (HTTP ${response.status})`);
-                }
-                const result = await response.json();
+                // 2. Supabase에서 타로 리딩 데이터 가져오기
+                const { data, error } = await supabaseClient
+                    .from('shared_readings')
+                    .select('reading_data')
+                    .eq('id', shareId)
+                    .single();
+
+                if (error) throw new Error('결과를 불러오는데 실패했습니다.');
+                const result = data.reading_data;
 
                 // 3. 데이터를 HTML로 렌더링하기
                 renderResult(result, mainContainer);
