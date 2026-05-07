@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
+import { supabase } from '../supabase';
 import './Result.css';
 
-function Result({ result, goToHome, api_url, session }) {
+function Result({ result, goToHome, session }) {
   const [shareUrl, setShareUrl] = useState('');
   const [isSharing, setIsSharing] = useState(false);
   const [shareError, setShareError] = useState('');
 
-  if (!result) {
-    return null;
-  }
+  if (!result) return null;
 
   const { cards, reading } = result;
 
@@ -19,36 +18,25 @@ function Result({ result, goToHome, api_url, session }) {
   ];
 
   const handleShare = async () => {
-    if (!api_url || !session) {
+    if (!session) {
       setShareError('공유 기능에 필요한 정보가 없습니다. 다시 로그인해주세요.');
       return;
     }
-    
+
     setIsSharing(true);
     setShareError('');
     setShareUrl('');
 
     try {
-      const response = await fetch(`${api_url}/share`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.access_token}`,
-        },
-        body: JSON.stringify(result),
-      });
+      const { data, error } = await supabase
+        .from('shared_readings')
+        .insert({ reading_data: result, user_id: session.user.id })
+        .select('id')
+        .single();
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || '공유 링크 생성에 실패했습니다.');
-      }
+      if (error) throw new Error(error.message || '공유 링크 생성에 실패했습니다.');
 
-      const data = await response.json();
-      // Use the domain from the current window location for the share URL
-      const shareBaseUrl = window.location.origin;
-      const newShareUrl = `${shareBaseUrl}/share.html?id=${data.share_id}`;
-      setShareUrl(newShareUrl);
-
+      setShareUrl(`${window.location.origin}/share.html?id=${data.id}`);
     } catch (e) {
       console.error("Error creating share link:", e);
       setShareError(e.message);
@@ -59,13 +47,8 @@ function Result({ result, goToHome, api_url, session }) {
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(shareUrl)
-      .then(() => {
-        alert('공유 링크가 클립보드에 복사되었습니다!');
-      })
-      .catch(err => {
-        console.error('클립보드 복사 실패:', err);
-        alert('클립보드 복사에 실패했습니다.');
-      });
+      .then(() => alert('공유 링크가 클립보드에 복사되었습니다!'))
+      .catch(() => alert('클립보드 복사에 실패했습니다.'));
   };
 
   return (
@@ -73,9 +56,9 @@ function Result({ result, goToHome, api_url, session }) {
       {readingParts.map((part, index) => (
         <div key={index} className="reading-block">
           <div className="card-display">
-            <img 
-              src={part.card.image_url} 
-              alt={part.card.name} 
+            <img
+              src={part.card.image_url}
+              alt={part.card.name}
               className={part.card.orientation === '역방향' ? 'reversed-card' : ''}
             />
             <div className="card-name">{part.card.name} ({part.card.orientation})</div>

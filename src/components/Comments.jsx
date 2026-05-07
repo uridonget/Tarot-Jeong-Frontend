@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabase';
 import './Comments.css';
 
 function Comments({ postId, api_url, session }) {
@@ -11,12 +12,19 @@ function Comments({ postId, api_url, session }) {
   const fetchComments = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${api_url}/posts/${postId}/comments`);
-      if (!response.ok) {
-        throw new Error('댓글을 불러오는 데 실패했습니다.');
-      }
-      const data = await response.json();
-      setComments(data);
+      const { data, error } = await supabase
+        .from('comments')
+        .select('id, content, created_at, user_id, is_deleted, is_purified, users(nickname, profile_image_url)')
+        .eq('post_id', postId)
+        .order('created_at', { ascending: true });
+
+      if (error) throw new Error('댓글을 불러오는 데 실패했습니다.');
+
+      setComments(data.map(c => ({
+        ...c,
+        nickname: c.users?.nickname,
+        profile_image_url: c.users?.profile_image_url,
+      })));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -25,10 +33,8 @@ function Comments({ postId, api_url, session }) {
   };
 
   useEffect(() => {
-    if (postId) {
-      fetchComments();
-    }
-  }, [postId, api_url]);
+    if (postId) fetchComments();
+  }, [postId]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,9 +59,7 @@ function Comments({ postId, api_url, session }) {
       }
 
       setNewComment('');
-      // 댓글 작성 성공 후 댓글 목록 다시 불러오기
       fetchComments();
-
     } catch (err) {
       setError(err.message);
     } finally {

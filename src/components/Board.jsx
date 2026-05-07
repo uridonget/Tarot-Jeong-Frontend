@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { supabase } from '../supabase';
 import './Board.css';
-import Loading from './Loading'; // 로딩 컴포넌트 import
+import Loading from './Loading';
 
-function Board({ changeView, api_url }) {
+function Board({ changeView }) {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -11,12 +12,20 @@ function Board({ changeView, api_url }) {
     const fetchPosts = async () => {
       try {
         setLoading(true);
-        const response = await fetch(`${api_url}/posts?page=1`);
-        if (!response.ok) {
-          throw new Error('게시글을 불러오는 데 실패했습니다.');
-        }
-        const data = await response.json();
-        setPosts(data);
+        const { data, error } = await supabase
+          .from('posts')
+          .select('id, title, created_at, user_id, users(nickname, profile_image_url)')
+          .eq('is_deleted', false)
+          .order('created_at', { ascending: false })
+          .range(0, 9);
+
+        if (error) throw new Error('게시글을 불러오는 데 실패했습니다.');
+
+        setPosts(data.map(post => ({
+          ...post,
+          nickname: post.users?.nickname,
+          profile_image_url: post.users?.profile_image_url,
+        })));
       } catch (err) {
         setError(err.message);
       } finally {
@@ -25,7 +34,7 @@ function Board({ changeView, api_url }) {
     };
 
     fetchPosts();
-  }, [api_url]);
+  }, []);
 
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
@@ -33,15 +42,9 @@ function Board({ changeView, api_url }) {
   };
 
   const renderContent = () => {
-    if (loading) {
-      return <Loading />;
-    }
-    if (error) {
-      return <p className="error-message">오류: {error}</p>;
-    }
-    if (posts.length === 0) {
-      return <p>아직 게시글이 없습니다. 첫 글을 작성해보세요!</p>;
-    }
+    if (loading) return <Loading />;
+    if (error) return <p className="error-message">오류: {error}</p>;
+    if (posts.length === 0) return <p>아직 게시글이 없습니다. 첫 글을 작성해보세요!</p>;
     return (
       <ul className="post-list">
         {posts.map(post => (
