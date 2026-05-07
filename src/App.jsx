@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from './supabase';
 import './App.css';
 import './index.css';
 import Sidebar from './components/Sidebar';
@@ -13,11 +13,6 @@ import PostEditor from './components/PostEditor';
 import PostView from './components/PostView';
 
 const MAINTENANCE_MODE = false;
-
-// --- Supabase 설정 ---
-const supabaseUrl = 'https://lxgjgzgoakykzpgwsqst.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4Z2pnemdvYWt5a3pwZ3dzcXN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3Njg4OTY0MTYsImV4cCI6MjA4NDQ3MjQxNn0.lt-QO3APUllRu5mry9huHa2SZQ2UqmujUcXvZA-qnBA';
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 // ---------------------------------
 // TODO: 'sam deploy' 후 출력되는 API Gateway URL로 이 값을 변경해주세요.
@@ -229,13 +224,13 @@ function App() {
       case 'loading':
         return <Loading />;
       case 'result':
-        return <Result result={tarotReading} goToHome={goToHome} api_url={API_URL} session={session} />;
+        return <Result result={tarotReading} goToHome={goToHome} session={session} />;
       case 'notfound':
         return <NotFound />;
       case 'forbidden':
         return <Forbidden />;
       case 'board':
-        return <Board changeView={changeView} api_url={API_URL} />;
+        return <Board changeView={changeView} />;
       case 'post':
         if (postId === 'new') {
           return <PostEditor session={session} api_url={API_URL} changeView={changeView} />;
